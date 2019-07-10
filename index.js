@@ -2,7 +2,8 @@ const express = require('express');
 
 const app = express();
 
-app.use(express.json());
+
+require('./server/startup/routes')(app)
 
 app.set("port", process.env.PORT || 3000);
 
