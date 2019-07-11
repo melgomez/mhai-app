@@ -1,17 +1,17 @@
 const mongoose = require('mongoose');
 const Joi = require('@hapi/joi');
 
-module.exports = mongoose.model("User", new mongoose.Schema({
+module.exports.User = mongoose.model("User", new mongoose.Schema({
     firstname: {
         type: String,
-        minlength: 30,
+        minlength: 2,
         maxlength: 60,
         required: true,
         trim: true
     },
     lastname: {
         type: String,
-        minlength: 30,
+        minlength: 2,
         maxlength: 60,
         required: true,
         trim: true
@@ -32,15 +32,17 @@ module.exports = mongoose.model("User", new mongoose.Schema({
         unique: true,
         trim: true
     },
-    role: ["superadmin", "admin", "company representative"],
+    role: {
+        type: String,
+        enum: ["superadmin", "admin", "company representative"],
+        default: "company representative"
+    },
     isVerified: {
         type: Boolean,
         default: false
     },
     phone: {
-        type: Number,
-        minlength: 11,
-        maxlength: 15,
+        type: String,
         required: true,
         trim: true
     }
@@ -48,11 +50,11 @@ module.exports = mongoose.model("User", new mongoose.Schema({
 
 module.exports.validate = (user) => {
     let userSchema = {
-        firstname:  Joi.string().min(30).max(60).required(),
-        lastname:   Joi.string().min(30).max(60).required(),
+        firstname:  Joi.string().min(2).max(60).required(),
+        lastname:   Joi.string().min(2).max(60).required(),
         username:   Joi.string().min(8).max(30).required(),
         password:   Joi.string().min(8).max(30).required(),
-        phone:      Joi.string().min(11).max(15).required()
+        phone:      Joi.string().required()
     }
     return Joi.validate(user, userSchema)
 }

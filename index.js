@@ -6,7 +6,7 @@ const path = require('path');
 
 const app = express();
 
-
+require('./server/startup/db')();
 require('./server/startup/routes')(app);
 
 app.set('port', process.env.PORT || 3000);
@@ -14,8 +14,10 @@ app.set('views', path.join(__dirname, 'server/views/pages'));
 
 app.set('view engine', 'ejs');
 app.use( layout );
-// Homepage Route
 
+app.use(express.static('public'));
+
+// Homepage Route
 app.get('/', (req, res) => {
     res.render('index', {title: 'Express from Server Folder'})
 });
