@@ -19,7 +19,7 @@ app.use(express.static('public'));
 
 // Homepage Route
 app.get('/', (req, res) => {
-    res.render('index', {title: 'Express from Server Folder'})
+    res.render('login', {title: 'Express from Server Folder'})
 });
 
 const server = app.listen(app.get('port'), () => {
