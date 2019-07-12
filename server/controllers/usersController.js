@@ -1,6 +1,4 @@
 const {User, validate} = require('../models/user');
-// const bcrypt = require('bcrypt');
-const express = require('express');
 
 module.exports = {
     index: async (req, res) => {
@@ -14,16 +12,16 @@ module.exports = {
     create: async (req, res) => {
         let { error } = validate(req.body);
         if(error) return res.status(404).send(error.details[0].message)
-
-        let user = new User({
+        let newUser = new User({
             firstname: req.body.firstname,
             lastname: req.body.lastname,
             username: req.body.username,
-            password: req.body.password,
-            phone: req.body.phone,
-        })
+            phone: req.body.phone
+        });
 
-        await user.save();
+        await User.register(newUser, req.body.password);
+        // await newUser.save();
+        res.send().status(200);
     },
     update: async (req, res) => {
         let { error } = validate(req.body);
@@ -31,16 +29,19 @@ module.exports = {
 
         let { username, firstname, lastname, password, phone } = req.body
         
-        let user = await User.findByIdAndUpdate(req.params.id, {$set: {firstname, lastname, password, phone, username }}, { new: true });
+        let user = await User.findByIdAndUpdate(req.params.id, {firstname, lastname, password, phone, username }, { new: true });
         
         if(!user) return res.status(404).send('The user with the given ID was not found.');
 
         res.send(user);
     },
     delete: async (req, res) => {
-        let user = await User.findByIdAndRemove(req.params.id);
+        // let user = await User.findByIdAndRemove(req.params.id);
+        let user = await User.remove({});
 
-        if(!user) return res.status(404).send('The user with the given ID was not found.');
-        res.send(user);
+        // if(!user) return res.status(404).send('The user with the given ID was not found.');
+        // res.send(user);
+
+        res.send('Cleared users.').status(200);
     }
 }
