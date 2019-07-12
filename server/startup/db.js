@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 module.exports = () => {
     mongoose.connect(config.get('db'), { 
         useNewUrlParser: true,
-        useCreateIndex: false,
+        useCreateIndex: true,
         useFindAndModify: false
     });
 

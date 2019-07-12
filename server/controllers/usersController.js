@@ -11,16 +11,17 @@ module.exports = {
     },
     create: async (req, res) => {
         let { error } = validate(req.body);
-        if(error) return res.status(404).send(error.details[0].message)
-        let newUser = new User({
-            firstname: req.body.firstname,
-            lastname: req.body.lastname,
-            username: req.body.username,
-            phone: req.body.phone
-        });
+        if(error) return res.status(404).send(error.details[0].message);
 
-        await User.register(newUser, req.body.password);
-        // await newUser.save();
+        let newUser = new User(req.body);
+        // let password = 
+        newUser.firstname = req.body.firstname;
+        newUser.lastname = req.body.lastname;
+        newUser.username = req.body.username;
+        newUser.password = await newUser.generateHash(req.body.password);
+        newUser.phone = req.body.phone;
+
+        await newUser.save();
         res.send().status(200);
     },
     update: async (req, res) => {
@@ -43,5 +44,8 @@ module.exports = {
         // res.send(user);
 
         res.send('Cleared users.').status(200);
+    },
+    sessionCreate: (req, res) => {
+        res.send('Ok')
     }
 }

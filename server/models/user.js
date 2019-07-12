@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 const Joi = require('@hapi/joi');
-const passportLocalMongoose = require('passport-local-mongoose')
+const bcrypt = require('bcrypt');
 
 
-const userSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
     firstname: {
         type: String,
         minlength: 2,
@@ -18,21 +18,20 @@ const userSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    // username: {
-    //     type: String,
-    //     minlength: 8,
-    //     maxlength: 60,
-    //     required: true,
-    //     unique: true,
-    //     trim: true
-    // },
-    // password: {
-    //     type: String,
-    //     minlength: 8,
-    //     maxlength: 30,
-    //     required: true,
-    //     trim: true
-    // },
+    username: {
+        type: String,
+        minlength: 8,
+        maxlength: 60,
+        required: true,
+        unique: true,
+        trim: true
+    },
+    password: {
+        type: String,
+        minlength: 8,
+        required: true,
+        trim: true
+    },
     role: {
         type: String,
         enum: ["superadmin", "admin", "company representative"],
@@ -49,17 +48,23 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-userSchema.plugin(passportLocalMongoose);
+UserSchema.methods.generateHash = function(password) {
+    return bcrypt.hash(password, bcrypt.genSaltSync(10), null);
+}
 
-module.exports.User = mongoose.model("User", userSchema);
+UserSchema.methods.validPassword = async function(password) {
+    return await bcrypt.compare(password, this.password);
+}
 
 module.exports.validate = (user) => {
     let userSchema = {
         firstname:  Joi.string().min(2).max(60).required(),
         lastname:   Joi.string().min(2).max(60).required(),
         username:   Joi.string().min(8).max(30).required(),
-        password:   Joi.string().required(),
+        password:   Joi.string().min(8).required(),
         phone:      Joi.string().required()
     }
     return Joi.validate(user, userSchema)
 }
+
+module.exports.User = mongoose.model("User", UserSchema);
