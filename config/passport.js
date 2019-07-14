@@ -15,19 +15,29 @@ module.exports = (passport) => {
         });
     });
 
+    // Login Local Strategy Implementation
+
     passport.use('local-login', new LocalStrategy( async (username, password, done) => {
-        await User.findOne({username: username}, (err, user) => {
-            if (err)
+        User.findOne({username: username}, async (err, user) => {
+            if (err) {
                 return done(err);
-            if (!user)
+            }
+            if (!user) {
                 return done(null, false, { message: 'Incorrect username.' });
-            if (!user.validPassword(password))
-                return done(null, false, req.flash('loginMessage', 'Wohh! Wrong password.'));
-            else
-                return done(null, user);
+            }
+            if (!await user.validPassword(password)) {
+                return done(null, false, {message: 'Incorrect Password'});
+            }
+            return done(null, user);
         })
-        
     }))
+
+
+    // Signup Local Stragey Implementation
+
+    // passport.use('local-signup', new LocalStrategy( async (req) => {
+    //     let newUser = 
+    // }));
 
 
 }

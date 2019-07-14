@@ -29,17 +29,17 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.set('view engine', 'ejs');
+app.use( layout );
 require('./server/startup/db')();
 require('./server/startup/routes')(app);
-
-// Login Users 
 
 
 app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, 'server/views/pages'));
 
-app.set('view engine', 'ejs');
-app.use( layout );
+
+
 
 app.use(express.static('public'));
 
@@ -57,8 +57,7 @@ app.get('/me', async (req, res) => {
     if(!req.isAuthenticated()) {
         res.send("Unauthorized")
     } else {
-        console.log(req.user)
-        res.send('user')
+        res.send(req.user.username + ' is logged in.')
         // res.send(req.session.id)
     }
 })

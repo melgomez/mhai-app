@@ -52,8 +52,8 @@ UserSchema.methods.generateHash = function(password) {
     return bcrypt.hash(password, bcrypt.genSaltSync(10), null);
 }
 
-UserSchema.methods.validPassword = async function(password) {
-    return await bcrypt.compare(password, this.password);
+UserSchema.methods.validPassword = function(password) {
+    return bcrypt.compare(password, this.password)
 }
 
 module.exports.validate = (user) => {

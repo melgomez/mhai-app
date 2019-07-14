@@ -8,7 +8,14 @@ router.get('/index', user.index);
 router.post('/', user.create);
 router.put('/:id', validateObjectId, user.update);
 router.delete('/:id', validateObjectId, user.delete);
-router.post('/login', passport.authenticate('local-login'), user.sessionCreate);
+
+// Session Routes
+router.post('/login', passport.authenticate('local-login', {
+    successRedirect : '/me',
+    failureRedirect : '/'
+}));
+router.get('/signup', user.signup);
+router.get('/logout', user.sessionDestroy);
 
 
 module.exports = router;

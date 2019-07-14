@@ -9,20 +9,25 @@ module.exports = {
         let user =  await FindById(req.params.id);
         if(!user) return res.status(404).send('The user with the given ID was not found.')
     },
+    signup: (req, res) => {
+        res.render('signup', {title: 'New User Registration'});
+    },
     create: async (req, res) => {
         let { error } = validate(req.body);
         if(error) return res.status(404).send(error.details[0].message);
 
         let newUser = new User(req.body);
-        // let password = 
+
         newUser.firstname = req.body.firstname;
         newUser.lastname = req.body.lastname;
         newUser.username = req.body.username;
-        newUser.password = await newUser.generateHash(req.body.password);
         newUser.phone = req.body.phone;
+        newUser.password = await newUser.generateHash(req.body.password);
 
         await newUser.save();
-        res.send().status(200);
+        
+        res.redirect('/');
+
     },
     update: async (req, res) => {
         let { error } = validate(req.body);
@@ -46,6 +51,11 @@ module.exports = {
         res.send('Cleared users.').status(200);
     },
     sessionCreate: (req, res) => {
-        res.send('Ok')
+        res.redirect('/me');
+    },
+    sessionDestroy: async (req, res) => {
+        await req.logout();
+        await req.session.destroy();
+        res.redirect('/')
     }
 }
