@@ -7,7 +7,7 @@ const passport = require('passport')
 router.get('/index', user.index);
 router.post('/', user.create);
 router.put('/:id', validateObjectId, user.update);
-router.delete('/:id', validateObjectId, user.delete);
+router.delete('/', user.delete);
 
 // Session Routes
 router.post('/login', passport.authenticate('local-login', {

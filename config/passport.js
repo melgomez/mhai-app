@@ -25,19 +25,10 @@ module.exports = (passport) => {
             if (!user) {
                 return done(null, false, { message: 'Incorrect username.' });
             }
-            if (!await user.validPassword(password)) {
+            if (! await user.validPassword(password)) {
                 return done(null, false, {message: 'Incorrect Password'});
             }
             return done(null, user);
         })
-    }))
-
-
-    // Signup Local Stragey Implementation
-
-    // passport.use('local-signup', new LocalStrategy( async (req) => {
-    //     let newUser = 
-    // }));
-
-
+    }));
 }

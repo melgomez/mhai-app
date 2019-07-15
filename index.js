@@ -8,7 +8,7 @@ const path = require('path');
 const passport = require('passport');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
-// const auth = require('./server/middleware/passport')
+const auth = require('./server/middleware/authentication')
 
 const app = express();
 
@@ -53,13 +53,8 @@ app.get('/', (req, res) => {
     res.render('login', {title: 'Express from Server Folder'})
 });
 
-app.get('/me', async (req, res) => {
-    if(!req.isAuthenticated()) {
-        res.send("Unauthorized")
-    } else {
-        res.send(req.user.username + ' is logged in.')
-        // res.send(req.session.id)
-    }
+app.get('/me', auth, (req, res) => {
+    res.render('profile', { title: `Profile`, user: req.user, login: req.isAuthenticated() })
 })
 
 const server = app.listen(app.get('port'), () => {
